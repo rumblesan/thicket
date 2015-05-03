@@ -19,6 +19,8 @@ Thicket.createContext = function () {
 Thicket.createSystem = function (audioCtx) {
     var AudioSystem = {};
 
+    AudioSystem.Synth = {};
+
     AudioSystem.Synth.create = function (dspAst, destination) {
         return Synth.createSynth(audioCtx, dspAst, destination);
     };
