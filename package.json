@@ -8,12 +8,15 @@
     "url": "https://github.com/rumblesan/thicket.git"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "browserify . > outtest.js"
   },
   "keywords": [
     "web",
     "audio"
   ],
   "author": "Guy John",
-  "license": "BSD-3"
+  "license": "BSD-3",
+  "devDependencies": {
+    "browserify": "^10.0.0"
+  }
 }
