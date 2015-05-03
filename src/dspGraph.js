@@ -33,7 +33,7 @@ internal.createOscillator = function (audioCtx, audioTargetNode, graphAst) {
     var waveParam = DspGraph.evaluate(
         audioCtx,
         oscillator.getWaveParam(),
-        graphAst.wave
+        graphAst.waveshape
     );
 
     var freqParam = DspGraph.evaluate(
