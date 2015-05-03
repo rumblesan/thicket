@@ -3,7 +3,7 @@
 require('./globals');
 
 var util = require('./util');
-var graphAST = require('./dspGraph');
+var graphAST = require('./dspAst');
 
 var Thicket = {};
 
