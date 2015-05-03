@@ -1,5 +1,5 @@
 
-var DspGraph = require('dspGraph');
+var DspGraph = require('./dspGraph');
 
 var Synth = {};
 
