@@ -22,7 +22,7 @@ Thicket.createSystem = function (audioCtx) {
     AudioSystem.Synth = {};
 
     AudioSystem.Synth.create = function (dspAst, destination) {
-        return Synth.createSynth(audioCtx, dspAst, destination);
+        return Synth.create(audioCtx, dspAst, destination);
     };
 
     /**
