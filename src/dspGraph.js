@@ -31,11 +31,13 @@ internal.createOscillator = function (audioCtx, audioTargetNode, graphAst) {
     oscillator.start();
 
     var waveParam = DspGraph.evaluate(
+        audioCtx,
         oscillator.getWaveParam(),
         graphAst.wave
     );
 
     var freqParam = DspGraph.evaluate(
+        audioCtx,
         oscillator.frequency,
         graphAst.frequency
     );
@@ -68,11 +70,13 @@ internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
     };
 
     var attackParams = DspGraph.evaluate(
+        audioCtx,
         envParams.attack,
         graphAst.attack
     );
 
     var decayParams = DspGraph.evaluate(
+        audioCtx,
         envParams.decay,
         graphAst.decay
     );
@@ -102,21 +106,25 @@ internal.createFilter = function (audioCtx, audioTargetNode, graphAst) {
     var filter = audioCtx.createBiquadFilter();
 
     var sourceParams = DspGraph.evaluate(
+        audioCtx,
         filter,
         graphAst.source
     );
 
     var filterTypeParam = DspGraph.evaluate(
+        audioCtx,
         filter.getFilterTypeParam(),
         graphAst.filterType
     );
 
     var freqParam = DspGraph.evaluate(
+        audioCtx,
         filter.frequency,
         graphAst.frequency
     );
 
     var resonanceParam = DspGraph.evaluate(
+        audioCtx,
         filter.Q,
         graphAst.resonance
     );
@@ -131,11 +139,13 @@ internal.createAmp = function (audioCtx, audioTargetNode, graphAst) {
     amp.gain.value = 0;
 
     var sourceParams = DspGraph.evaluate(
+        audioCtx,
         amp,
         graphAst.source
     );
 
     var volumeParams = DspGraph.evaluate(
+        audioCtx,
         amp.gain,
         graphAst.volume
     );
