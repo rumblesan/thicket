@@ -11,7 +11,7 @@ var Synth = {};
  *       paramName1: [setFunctions, ...]
  *     }
  **/
-Synth.createSynth = function (audioCtx, dspAst, destination) {
+Synth.create = function (audioCtx, dspAst, destination) {
     var destinationNode = destination | audioCtx.destination;
     return DspGraph.evaluate(
         audioCtx,
@@ -20,7 +20,7 @@ Synth.createSynth = function (audioCtx, dspAst, destination) {
     );
 };
 
-Synth.setSynthParam = function (synth, paramName, value) {
+Synth.setParam = function (synth, paramName, value) {
     var i;
     if (synth[paramName] === undefined) {
         throw new Error('Synth does not have ' + paramName + ' parameter');
@@ -31,7 +31,7 @@ Synth.setSynthParam = function (synth, paramName, value) {
     }
 };
 
-Synth.startSynth = function (synth, parameterList) {
+Synth.start = function (synth, parameterList) {
     var i, t;
     var paramName, paramValue;
     if (synth.trigger === undefined) {
@@ -40,7 +40,7 @@ Synth.startSynth = function (synth, parameterList) {
         for (i = 0; i < parameterList.length; i += 2) {
             paramName  = parameterList[i];
             paramValue = parameterList[i+1];
-            Synth.setSynthParam(synth, paramName, paramValue);
+            Synth.setParam(synth, paramName, paramValue);
         }
         for (t = 0; t < synth.trigger.length; t += 1) {
             synth.trigger[t]();
@@ -48,7 +48,7 @@ Synth.startSynth = function (synth, parameterList) {
     }
 };
 
-Synth.stopSynth = function (synth) {
+Synth.stop = function (synth) {
     var i, t;
     var paramName, paramValue;
     if (synth.stop === undefined) {
@@ -60,7 +60,7 @@ Synth.stopSynth = function (synth) {
     }
 };
 
-Synth.playSynth = function (synth, length, parameterList) {
+Synth.play = function (synth, length, parameterList) {
     var i, t;
     var paramName, paramValue;
     if (synth.trigger === undefined) {
@@ -69,13 +69,13 @@ Synth.playSynth = function (synth, length, parameterList) {
         for (i = 0; i < parameterList.length; i += 2) {
             paramName  = parameterList[i];
             paramValue = parameterList[i+1];
-            Synth.setSynthParam(synth, paramName, paramValue);
+            Synth.setParam(synth, paramName, paramValue);
         }
         for (t = 0; t < synth.trigger.length; t += 1) {
             synth.trigger[t]();
         }
         setTimeout(function () {
-            Synth.stopSynth(synth);
+            Synth.stop(synth);
         }, length * 1000);
     }
 };
