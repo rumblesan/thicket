@@ -12,7 +12,7 @@ var Synth = {};
  *     }
  **/
 Synth.create = function (audioCtx, dspAst, destination) {
-    var destinationNode = destination | audioCtx.destination;
+    var destinationNode = destination || audioCtx.destination;
     return DspGraph.evaluate(
         audioCtx,
         destinationNode,
