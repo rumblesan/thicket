@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "A web audio library",
   "main": "src/index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rumblesan/thicket.git"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
