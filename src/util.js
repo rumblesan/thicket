@@ -12,7 +12,7 @@ util.mergeNodeParams = function (paramNodes) {
     for (n = 0; n < paramNodes.length; n += 1) {
         node = paramNodes[n];
         for (p = 0; p < node.paramNames.length; p += 1) {
-            paramName = node.params[p];
+            paramName = node.paramNames[p];
             if (output.params[paramName] === undefined) {
                 output.params[paramName] = [];
                 output.paramNames.push(paramName);
