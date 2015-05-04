@@ -1,7 +1,11 @@
 /*global AudioParam, OscillatorNode, BiquadFilterNode */
 
 AudioParam.prototype.set = function (newValue, audioCtx) {
-    this.value.setValueAtTime(newValue, audioCtx.currentTime);
+    if (this.setValueAtTime) {
+        this.setValueAtTime(newValue, audioCtx.currentTime);
+    } else {
+        this.value = newValue;
+    }
 };
 
 OscillatorNode.prototype.getWaveParam = function () {
