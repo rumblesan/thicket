@@ -1,17 +1,13 @@
 /*global AudioParam, OscillatorNode, BiquadFilterNode */
 
-AudioParam.prototype.set = function (newValue) {
-    this.value = newValue;
-};
-
-AudioParam.prototype.setNow = function (newValue, audioCtx) {
+AudioParam.prototype.set = function (newValue, audioCtx) {
     this.value.setValueAtTime(newValue, audioCtx.currentTime);
 };
 
 OscillatorNode.prototype.getWaveParam = function () {
     var self = this;
     return {
-        set: function (waveType) {
+        set: function (waveType, audioCtx) {
             self.type = waveType;
         },
         get: function () {
@@ -23,7 +19,7 @@ OscillatorNode.prototype.getWaveParam = function () {
 BiquadFilterNode.prototype.getFilterTypeParam = function () {
     var self = this;
     return {
-        set: function (filterType) {
+        set: function (filterType, audioCtx) {
             self.type = filterType;
         },
         get: function () {

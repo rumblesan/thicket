@@ -6,7 +6,7 @@ var DspGraph = {};
 var internal = {};
 
 internal.createConstant = function (audioCtx, audioTargetNode, graphAst) {
-    audioTargetNode.set(graphAst.value);
+    audioTargetNode.set(graphAst.value, audioCtx);
     return {
         paramNames: []
     };
@@ -15,13 +15,13 @@ internal.createConstant = function (audioCtx, audioTargetNode, graphAst) {
 internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
     var paramName = graphAst.name;
     var defaultValue = graphAst.defaultValue;
-    audioTargetNode.set(defaultValue);
+    audioTargetNode.set(defaultValue, audioCtx);
     var paramParams = {};
     paramParams.params = {}; // worst name evar
     paramParams.paramNames = [paramName];
     paramParams.params[paramName] = [
         function (newValue) {
-            audioTargetNode.set(newValue);
+            audioTargetNode.set(newValue, audioCtx);
         }
     ];
     return paramParams;
@@ -53,7 +53,7 @@ internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
     var envParams = {};
     envParams.attack = {
         value: 0,
-        set: function (newValue) {
+        set: function (newValue, audioCtx) {
             envParams.attack.value = newValue;
         },
         get: function () {
@@ -62,7 +62,7 @@ internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
     };
     envParams.decay = {
         value: 0,
-        set: function (newValue) {
+        set: function (newValue, audioCtx) {
             envParams.decay.value = newValue;
         },
         get: function () {
