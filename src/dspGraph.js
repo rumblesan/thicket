@@ -8,7 +8,7 @@ var internal = {};
 internal.createConstant = function (audioCtx, audioTargetNode, graphAst) {
     audioTargetNode.set(graphAst.value);
     return {
-        params: []
+        paramNames: []
     };
 };
 
@@ -17,8 +17,9 @@ internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
     var defaultValue = graphAst.defaultValue;
     audioTargetNode.set(defaultValue);
     var paramParams = {};
-    paramParams.params = [paramName];
-    paramParams[paramName] = [
+    paramParams.params = {}; // worst name evar
+    paramParams.paramNames = [paramName];
+    paramParams.params[paramName] = [
         function (newValue) {
             audioTargetNode.set(newValue);
         }
@@ -94,9 +95,11 @@ internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
         );
     };
     var triggerParams = {
-        params: ['trigger', 'stop'],
-        trigger: [trigger],
-        stop: [stop]
+        paramsNames: ['trigger', 'stop'],
+        params: {
+            trigger: [trigger],
+            stop: [stop]
+        }
     };
 
     return util.mergeNodeParams([attackParams, decayParams, triggerParams]);
