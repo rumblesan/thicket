@@ -77,7 +77,7 @@ Synth.play = function (synth, length, parameterList) {
             synth.params.trigger[t]();
         }
         setTimeout(function () {
-            Synth.params.stop(synth);
+            Synth.stop(synth);
         }, length * 1000);
     }
 };
