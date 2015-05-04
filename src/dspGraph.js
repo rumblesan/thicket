@@ -95,7 +95,7 @@ internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
         );
     };
     var triggerParams = {
-        paramsNames: ['trigger', 'stop'],
+        paramNames: ['trigger', 'stop'],
         params: {
             trigger: [trigger],
             stop: [stop]
