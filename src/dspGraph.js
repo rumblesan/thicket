@@ -27,6 +27,20 @@ internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
     return paramParams;
 };
 
+internal.createInput = function (audioCtx, audioTargetNode, graphAst) {
+    var inputName = graphAst.name;
+
+    var inputParams = {};
+    inputParams.params = {};
+    inputParams.paramNames = ['connect'];
+    inputParams.params.connect = [
+        function (sourceNode) {
+            sourceNode.connect(audioTargetNode);
+        }
+    ];
+    return inputParams;
+};
+
 internal.createOscillator = function (audioCtx, audioTargetNode, graphAst) {
     var oscillator = audioCtx.createOscillator();
     oscillator.start();

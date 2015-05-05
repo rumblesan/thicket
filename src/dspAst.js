@@ -28,6 +28,13 @@ dsp.Constant = function (value) {
     };
 };
 
+dsp.Input = function (name) {
+    return {
+        type: 'INPUT',
+        name: name
+    };
+};
+
 dsp.Param = function (name, defaultValue) {
     return {
         type: 'PARAM',
