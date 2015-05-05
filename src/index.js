@@ -4,6 +4,7 @@ require('./globals');
 
 var graphAST = require('./dspAst');
 var Synth = require('./synth');
+var Effects = require('./effects');
 
 var Thicket = {};
 
@@ -23,6 +24,10 @@ Thicket.createSystem = function (audioCtx) {
 
     AudioSystem.Synth.create = function (dspAst, destination) {
         return Synth.create(audioCtx, dspAst, destination);
+    };
+
+    AudioSystem.Effects.create = function (dspAst, destination) {
+        return Effects.createChain(audioCtx, dspAst, destination);
     };
 
     /**
