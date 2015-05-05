@@ -79,6 +79,19 @@ dsp.Delay = function (source, delayTime, feedback) {
     };
 };
 
+dsp.Compressor = function (source, threshold, ratio, knee, reduction, attack, release) {
+    return {
+        type: 'COMPRESSOR',
+        source: source,
+        threshold: threshold,
+        ratio: ratio,
+        knee: knee,
+        reduction: reduction,
+        attack: attack,
+        release: release
+    };
+};
+
 dsp.Amp = function (source, volume) {
     return {
         type: 'AMP',

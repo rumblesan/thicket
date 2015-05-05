@@ -171,6 +171,29 @@ internal.createAmp = function (audioCtx, audioTargetNode, graphAst) {
     return util.mergeNodeParams([sourceParams, volumeParams]);
 };
 
+internal.createCompressor = function (audioCtx, audioTargetNode, graphAst) {
+    var comp = audioCtx.createDynamicsCompressor();
+
+    var sourceParams = DspGraph.evaluate(
+        audioCtx,
+        comp,
+        graphAst.source
+    );
+
+    var thresholdParams = DspGraph.evaluate(audioCtx, comp.threshold, graphAst.threshold);
+    var ratioParams     = DspGraph.evaluate(audioCtx, comp.ratio,     graphAst.ratio);
+    var kneeParams      = DspGraph.evaluate(audioCtx, comp.knee,      graphAst.knee);
+    var reductionParams = DspGraph.evaluate(audioCtx, comp.reduction, graphAst.reduction);
+    var attackParams    = DspGraph.evaluate(audioCtx, comp.attack,    graphAst.attack);
+    var releaseParams   = DspGraph.evaluate(audioCtx, comp.release,   graphAst.release);
+
+    comp.connect(audioTargetNode);
+
+    return util.mergeNodeParams([
+        sourceParams, thresholdParams, kneeParams, reductionParams, attackParams, releaseParams
+    ]);
+};
+
 internal.createDelay = function (audioCtx, audioTargetNode, graphAst) {
     var feedbackAmp = audioCtx.createGain();
     var mainAmp = audioCtx.createGain();
@@ -225,6 +248,9 @@ DspGraph.evaluate = function(audioCtx, audioTargetNode, graphAst) {
             break;
         case 'AMP':
             result = internal.createAmp(audioCtx, audioTargetNode, graphAst);
+            break;
+        case 'COMPRESSOR':
+            result = internal.createCompressor(audioCtx, audioTargetNode, graphAst);
             break;
         case 'DELAY':
             result = internal.createDelay(audioCtx, audioTargetNode, graphAst);
