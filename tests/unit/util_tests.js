@@ -1,5 +1,5 @@
 
-var util = require('../src/util');
+var util = require('../../src/util');
 
 /*
   ======== A Handy Little Nodeunit Reference ========

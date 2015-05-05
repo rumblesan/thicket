@@ -9,7 +9,7 @@
   },
   "scripts": {
     "build": "browserify . > outtest.js",
-    "test": "nodeunit tests"
+    "test": "nodeunit tests/unit"
   },
   "keywords": [
     "web",
