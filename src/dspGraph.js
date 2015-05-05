@@ -226,6 +226,9 @@ DspGraph.evaluate = function(audioCtx, audioTargetNode, graphAst) {
         case 'AMP':
             result = internal.createAmp(audioCtx, audioTargetNode, graphAst);
             break;
+        case 'DELAY':
+            result = internal.createDelay(audioCtx, audioTargetNode, graphAst);
+            break;
         default:
             throw new Error("Unknown DSP graph type: " + graphAst.type);
     }
