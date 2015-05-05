@@ -171,6 +171,40 @@ internal.createAmp = function (audioCtx, audioTargetNode, graphAst) {
     return util.mergeNodeParams([sourceParams, volumeParams]);
 };
 
+internal.createDelay = function (audioCtx, audioTargetNode, graphAst) {
+    var feedbackAmp = audioCtx.createGain();
+    var mainAmp = audioCtx.createGain();
+    var delayNode = audioCtx.createDelay(graphAst);
+
+    mainAmp.gain.value = 1;
+
+    var sourceParams = DspGraph.evaluate(
+        audioCtx,
+        mainAmp,
+        graphAst.source
+    );
+
+    var delayTimeParams = DspGraph.evaluate(
+        audioCtx,
+        delayNode.delayTime,
+        graphAst.delayTime
+    );
+
+    var feedbackParams = DspGraph.evaluate(
+        audioCtx,
+        feedbackAmp.gain,
+        graphAst.feedback
+    );
+
+    mainAmp.connect(delayNode);
+    delayNode.connect(feedbackAmp);
+    feedbackAmp.connect(mainAmp);
+
+    mainAmp.connect(audioTargetNode);
+
+    return util.mergeNodeParams([sourceParams, delayTimeParams, feedbackParams]);
+};
+
 DspGraph.evaluate = function(audioCtx, audioTargetNode, graphAst) {
     var result;
     switch (graphAst.type) {

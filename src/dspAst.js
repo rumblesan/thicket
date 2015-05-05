@@ -51,7 +51,7 @@ dsp.AREnvelope = function (attack, decay) {
     };
 };
 
-dsp.Oscillator = function(frequency, waveshape) {
+dsp.Oscillator = function (frequency, waveshape) {
     return {
         type: 'OSCILLATOR',
         frequency: checkConst(frequency),
@@ -59,7 +59,7 @@ dsp.Oscillator = function(frequency, waveshape) {
     };
 };
 
-dsp.Filter = function(source, filterType, frequency, resonance) {
+dsp.Filter = function (source, filterType, frequency, resonance) {
     return {
         type: 'FILTER',
         source: source,
@@ -69,7 +69,17 @@ dsp.Filter = function(source, filterType, frequency, resonance) {
     };
 };
 
-dsp.Amp = function(source, volume) {
+dsp.Delay = function (source, delayTime, feedback) {
+    return {
+        type: 'DELAY',
+        source: source,
+        delayTime: delayTime,
+        delayMax: delayTime * 2,
+        feedback: feedback
+    };
+};
+
+dsp.Amp = function (source, volume) {
     return {
         type: 'AMP',
         source: source,
