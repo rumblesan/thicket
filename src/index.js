@@ -5,10 +5,13 @@ require('./globals');
 var graphAST = require('./dspAst');
 var Synth = require('./synth');
 var Effects = require('./effects');
+var Helpers = require('./helpers');
 
 var Thicket = {};
 
 Thicket.AST = graphAST;
+
+Thicket.helpers = Helpers;
 
 Thicket.createContext = function () {
     var context;
