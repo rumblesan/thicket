@@ -36,16 +36,16 @@ Synth.setParam = function (synth, paramName, value) {
 Synth.start = function (synth, parameterList) {
     var i, t;
     var paramName, paramValue;
-    if (synth.params.trigger === undefined) {
-        throw new Error('Synth does not have trigger parameter');
+    if (synth.params.start === undefined) {
+        throw new Error('Synth does not have start parameter');
     } else {
         for (i = 0; i < parameterList.length; i += 2) {
             paramName  = parameterList[i];
             paramValue = parameterList[i+1];
             Synth.setParam(synth, paramName, paramValue);
         }
-        for (t = 0; t < synth.params.trigger.length; t += 1) {
-            synth.params.trigger[t]();
+        for (t = 0; t < synth.params.start.length; t += 1) {
+            synth.params.start[t]();
         }
     }
 };
@@ -65,20 +65,17 @@ Synth.stop = function (synth) {
 Synth.play = function (synth, length, parameterList) {
     var i, t;
     var paramName, paramValue;
-    if (synth.params.trigger === undefined) {
-        throw new Error('Synth does not have trigger parameter');
+    if (synth.params.play === undefined) {
+        throw new Error('Synth does not have play parameter');
     } else {
         for (i = 0; i < parameterList.length; i += 2) {
             paramName  = parameterList[i];
             paramValue = parameterList[i+1];
             Synth.setParam(synth, paramName, paramValue);
         }
-        for (t = 0; t < synth.params.trigger.length; t += 1) {
-            synth.params.trigger[t]();
+        for (t = 0; t < synth.params.play.length; t += 1) {
+            synth.params.play[t](length);
         }
-        setTimeout(function () {
-            Synth.stop(synth);
-        }, length * 1000);
     }
 };
 

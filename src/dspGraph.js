@@ -96,8 +96,20 @@ internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
         graphAst.decay
     );
 
-    var trigger = function () {
+    var play = function (length) {
         var t = audioCtx.currentTime + envParams.attack.value;
+        audioTargetNode.linearRampToValueAtTime(
+            1.0, t
+        );
+        audioTargetNode.linearRampToValueAtTime(
+            1.0, (t + length)
+        );
+        audioTargetNode.linearRampToValueAtTime(
+            0.0, (t + length + envParams.decay.value)
+        );
+    };
+    var start = function () {
+        var t = audioCtx.currentTime + envParams.decay.value;
         audioTargetNode.linearRampToValueAtTime(
             1.0, t
         );
@@ -109,9 +121,10 @@ internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
         );
     };
     var triggerParams = {
-        paramNames: ['trigger', 'stop'],
+        paramNames: ['play', 'start', 'stop'],
         params: {
-            trigger: [trigger],
+            play: [play],
+            start: [start],
             stop: [stop]
         }
     };
