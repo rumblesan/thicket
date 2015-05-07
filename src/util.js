@@ -25,5 +25,38 @@ util.mergeNodeParams = function (paramNodes) {
     return output;
 };
 
+util.createParamNodeSummer = function (audioTargetNode) {
+    var paramSummer = {};
+
+    paramSummer.constant = 0;
+    paramSummer.names = [];
+    paramSummer.values = {};
+
+    paramSummer.setTarget = function () {
+        var name, i, v, total = paramSummer.constant;
+        for (i = 0; i < paramSummer.names.length; i += 1) {
+            name = paramSummer.names[i];
+            v = paramSummer.values[name];
+            total += v;
+        }
+        audioTargetNode.set(total);
+    };
+
+    paramSummer.createSetNode = function (name) {
+        paramSummer.names.push(name);
+        paramSummer.values[name] = 0;
+        var setNode = {
+            set: function (value) {
+                paramSummer.values[name] = value;
+                paramSummer.setTarget();
+            }
+        };
+        return setNode;
+    };
+
+    return paramSummer;
+};
+
+
 module.exports = util;
 

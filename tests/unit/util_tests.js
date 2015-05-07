@@ -57,6 +57,33 @@ module.exports = {
         test.equal(merged.params.param2.length, 2);
         test.equal(merged.params.param3.length, 1);
         test.done();
+    },
+
+    'param summer works correctly': function (test) {
+        var targetNode = {};
+        targetNode.value = 0;
+        targetNode.set = function (v) {
+            targetNode.value = v;
+        };
+        var paramSummer = util.createParamNodeSummer(targetNode);
+
+        paramSummer.constant = 10;
+        paramSummer.setTarget();
+        test.equal(targetNode.value, 10);
+
+        var fooNode = paramSummer.createSetNode('foo');
+        var barNode = paramSummer.createSetNode('bar');
+
+        fooNode.set(4);
+        test.equal(targetNode.value, 14);
+
+        barNode.set(2);
+        test.equal(targetNode.value, 16);
+
+        fooNode.set(-14);
+        test.equal(targetNode.value, -2);
+
+        test.done();
     }
 
 };
