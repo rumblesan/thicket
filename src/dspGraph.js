@@ -41,6 +41,54 @@ internal.createInput = function (audioCtx, audioTargetNode, graphAst) {
     return inputParams;
 };
 
+/* node to sum all inputs together */
+internal.createMix = function (audioCtx, audioTargetNode, graphAst) {
+    var paramSum     = util.createParamSum(audioTargetNode);
+    var outputParams = [];
+
+    var s, n;
+    for (s = 0; s < graphAst.sources; s += 1) {
+        n = graphAst.sources[s];
+        switch (n.type) {
+            case 'CONSTANT':
+                paramSum.constant += n.value;
+                break;
+            case 'PARAM':
+                outputParams.push(
+                    DspGraph.evaluate(audioCtx, paramSum.createSet(n.name), n)
+                );
+                break;
+            default:
+                outputParams.push(
+                    DspGraph.evaluate(audioCtx, audioTargetNode, n)
+                );
+                break;
+        }
+    }
+
+    return util.mergeNodeParams(outputParams);
+};
+
+/* node to multiply all inputs together */
+internal.createMultiply = function (audioCtx, audioTargetNode, graphAst) {
+
+    var factor = graphAst.factor.value;
+
+    var multSet = {
+        set: function (value, audioCtx) {
+            audioTargetNode.set(factor * value, audioCtx);
+        }
+    };
+
+    var params = DspGraph.evaluate(
+        audioCtx,
+        multSet,
+        graphAst.source
+    );
+
+    return params;
+};
+
 internal.createOscillator = function (audioCtx, audioTargetNode, graphAst) {
     var oscillator = audioCtx.createOscillator();
     oscillator.start();
@@ -249,6 +297,12 @@ DspGraph.evaluate = function(audioCtx, audioTargetNode, graphAst) {
             break;
         case 'PARAM':
             result = internal.createParam(audioCtx, audioTargetNode, graphAst);
+            break;
+        case 'MIX':
+            result = internal.createMix(audioCtx, audioTargetNode, graphAst);
+            break;
+        case 'MULTIPLY':
+            result = internal.createMultiply(audioCtx, audioTargetNode, graphAst);
             break;
         case 'ARENVELOPE':
             result = internal.createEnvelope(audioCtx, audioTargetNode, graphAst);

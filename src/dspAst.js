@@ -43,6 +43,24 @@ dsp.Param = function (name, defaultValue) {
     };
 };
 
+dsp.Mix = function (/* args */) {
+    return {
+        type: 'MIX',
+        sources: arguments
+    };
+};
+
+/* only meant to be used for multiplying params
+ * Amp should be used with signals
+ */
+dsp.Multiply = function (source, factor) {
+    return {
+        type: 'MULTIPLY',
+        source: source,
+        factor: factor
+    };
+};
+
 dsp.AREnvelope = function (attack, decay) {
     return {
         type: 'ARENVELOPE',
