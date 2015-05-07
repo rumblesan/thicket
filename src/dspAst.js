@@ -77,6 +77,13 @@ dsp.Oscillator = function (frequency, waveshape) {
     };
 };
 
+dsp.Noise = function (noiseType) {
+    return {
+        type: 'NOISE',
+        noiseType: noiseType
+    };
+};
+
 dsp.Filter = function (source, filterType, frequency, resonance) {
     return {
         type: 'FILTER',

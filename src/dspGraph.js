@@ -1,5 +1,6 @@
 
 var util = require('./util');
+var noise = require('./noise');
 
 var DspGraph = {};
 
@@ -87,6 +88,29 @@ internal.createMultiply = function (audioCtx, audioTargetNode, graphAst) {
     );
 
     return params;
+};
+
+// No params for a noise source so return an empty param object
+internal.createNoise = function (audioCtx, audioTargetNode, graphAst) {
+    var audioNode;
+    switch(graphAst.noiseType) {
+        case 'white':
+            audioNode = noise.createWhite(audioCtx);
+            break;
+        case 'pink':
+            audioNode = noise.createPink(audioCtx);
+            break;
+        case 'brown':
+            audioNode = noise.createBrown(audioCtx);
+            break;
+        default:
+            audioNode = noise.createWhite(audioCtx);
+            break;
+    }
+    return {
+        paramNames: [],
+        params: {}
+    };
 };
 
 internal.createOscillator = function (audioCtx, audioTargetNode, graphAst) {
@@ -309,6 +333,9 @@ DspGraph.evaluate = function(audioCtx, audioTargetNode, graphAst) {
             break;
         case 'OSCILLATOR':
             result = internal.createOscillator(audioCtx, audioTargetNode, graphAst);
+            break;
+        case 'NOISE':
+            result = internal.createNoise(audioCtx, audioTargetNode, graphAst);
             break;
         case 'FILTER':
             result = internal.createFilter(audioCtx, audioTargetNode, graphAst);
