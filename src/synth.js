@@ -28,9 +28,21 @@ Synth.setParam = function (synth, paramName, value) {
         throw new Error('Synth does not have ' + paramName + ' parameter');
     } else {
         for (i = 0; i < synth.params[paramName].length; i += 1) {
-            synth.params[paramName][i](value);
+            synth.params[paramName][i].set(value);
         }
     }
+};
+
+Synth.getParam = function (synth, paramName, value) {
+    var i, output = [];
+    if (synth.params[paramName] === undefined) {
+        throw new Error('Synth does not have ' + paramName + ' parameter');
+    } else {
+        for (i = 0; i < synth.params[paramName].length; i += 1) {
+            output.push(synth.params[paramName][i].get(value));
+        }
+    }
+    return output;
 };
 
 Synth.start = function (synth, parameterList) {

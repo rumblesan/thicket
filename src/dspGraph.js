@@ -14,17 +14,27 @@ internal.createConstant = function (audioCtx, audioTargetNode, graphAst) {
 };
 
 internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
-    var paramName = graphAst.name;
-    var defaultValue = graphAst.defaultValue;
-    audioTargetNode.set(defaultValue, audioCtx);
-    var paramParams = {};
-    paramParams.params = {}; // worst name evar
-    paramParams.paramNames = [paramName];
-    paramParams.params[paramName] = [
-        function (newValue) {
-            audioTargetNode.set(newValue, audioCtx);
+
+    var name  = graphAst.name;
+    var value = graphAst.defaultValue;
+    audioTargetNode.set(value, audioCtx);
+
+    var p = {
+        paramNames: [],
+        params: {}
+    };
+    p.paramNames.push(name);
+    p.params[paramName] = [
+        {
+            set: function (newValue) {
+                value = newValue;
+                audioTargetNode.set(newValue, audioCtx);
+            },
+            get: function () {
+                return value;
+            }
         }
-    ];
+    ]
     return paramParams;
 };
 
@@ -35,8 +45,13 @@ internal.createInput = function (audioCtx, audioTargetNode, graphAst) {
     inputParams.params = {};
     inputParams.paramNames = ['connect'];
     inputParams.params.connect = [
-        function (sourceNode) {
-            sourceNode.connect(audioTargetNode);
+        {
+            set: function (sourceNode) {
+                sourceNode.connect(audioTargetNode);
+            },
+            get: function () {
+                return audioTargetNode
+            },
         }
     ];
     return inputParams;
@@ -44,7 +59,7 @@ internal.createInput = function (audioCtx, audioTargetNode, graphAst) {
 
 /* node to sum all inputs together */
 internal.createMix = function (audioCtx, audioTargetNode, graphAst) {
-    var paramSum     = util.createParamSum(audioTargetNode);
+    var paramSum     = util.createParamNodeSummer(audioCtx, audioTargetNode);
     var outputParams = [];
 
     var s, n;

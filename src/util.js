@@ -25,7 +25,7 @@ util.mergeNodeParams = function (paramNodes) {
     return output;
 };
 
-util.createParamNodeSummer = function (audioTargetNode) {
+util.createParamNodeSummer = function (audioCtx, audioTargetNode) {
     var paramSummer = {};
 
     paramSummer.constant = 0;
@@ -39,7 +39,7 @@ util.createParamNodeSummer = function (audioTargetNode) {
             v = paramSummer.values[name];
             total += v;
         }
-        audioTargetNode.set(total);
+        audioTargetNode.set(total, audioCtx);
     };
 
     paramSummer.createSetNode = function (name) {

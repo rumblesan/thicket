@@ -65,7 +65,7 @@ module.exports = {
         targetNode.set = function (v) {
             targetNode.value = v;
         };
-        var paramSummer = util.createParamNodeSummer(targetNode);
+        var paramSummer = util.createParamNodeSummer({}, targetNode);
 
         paramSummer.constant = 10;
         paramSummer.setTarget();
