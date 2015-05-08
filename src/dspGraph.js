@@ -322,6 +322,9 @@ DspGraph.evaluate = function(audioCtx, audioTargetNode, graphAst) {
         case 'PARAM':
             result = internal.createParam(audioCtx, audioTargetNode, graphAst);
             break;
+        case 'INPUT':
+            result = internal.createInput(audioCtx, audioTargetNode, graphAst);
+            break;
         case 'MIX':
             result = internal.createMix(audioCtx, audioTargetNode, graphAst);
             break;
