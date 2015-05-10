@@ -35,11 +35,11 @@ dsp.Input = function (name) {
     };
 };
 
-dsp.Param = function (name, defaultValue) {
+dsp.Param = function (name, value) {
     return {
         type: 'PARAM',
         name: name,
-        defaultValue: defaultValue
+        value: value
     };
 };
 
@@ -80,7 +80,7 @@ dsp.Oscillator = function (frequency, waveshape) {
 dsp.Noise = function (noiseType) {
     return {
         type: 'NOISE',
-        noiseType: noiseType
+        noiseType: checkConst(noiseType)
     };
 };
 
@@ -94,13 +94,13 @@ dsp.Filter = function (source, filterType, frequency, resonance) {
     };
 };
 
-dsp.Delay = function (source, delayTime, feedback) {
+dsp.Delay = function (source, delayTime, delayMax, feedback) {
     return {
         type: 'DELAY',
         source: source,
-        delayTime: delayTime,
-        delayMax: delayTime * 2,
-        feedback: feedback
+        delayTime: checkConst(delayTime),
+        delayMax: checkConst(delayMax),
+        feedback: checkConst(feedback)
     };
 };
 
@@ -108,12 +108,12 @@ dsp.Compressor = function (source, threshold, ratio, knee, reduction, attack, re
     return {
         type: 'COMPRESSOR',
         source: source,
-        threshold: threshold,
-        ratio: ratio,
-        knee: knee,
-        reduction: reduction,
-        attack: attack,
-        release: release
+        threshold: checkConst(threshold),
+        ratio: checkConst(ratio),
+        knee: checkConst(knee),
+        reduction: checkConst(reduction),
+        attack: checkConst(attack),
+        release: checkConst(release)
     };
 };
 

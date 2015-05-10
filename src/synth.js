@@ -33,13 +33,13 @@ Synth.setParam = function (synth, paramName, value) {
     }
 };
 
-Synth.getParam = function (synth, paramName, value) {
+Synth.getParam = function (synth, paramName) {
     var i, output = [];
     if (synth.params[paramName] === undefined) {
         throw new Error('Synth does not have ' + paramName + ' parameter');
     } else {
         for (i = 0; i < synth.params[paramName].length; i += 1) {
-            output.push(synth.params[paramName][i].get(value));
+            output.push(synth.params[paramName][i].get());
         }
     }
     return output;

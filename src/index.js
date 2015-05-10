@@ -24,6 +24,7 @@ Thicket.createSystem = function (audioCtx) {
     var AudioSystem = {};
 
     AudioSystem.Synth = {};
+    AudioSystem.Effects = {};
 
     AudioSystem.Synth.create = function (dspAst, destination) {
         return Synth.create(audioCtx, dspAst, destination);
@@ -39,6 +40,12 @@ Thicket.createSystem = function (audioCtx) {
      * value
      */
     AudioSystem.Synth.setParam = Synth.setParam;
+
+    /**
+     * synth
+     * paramName
+     */
+    AudioSystem.Synth.getParam = Synth.getParam;
 
     /**
      * synth

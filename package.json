@@ -9,7 +9,8 @@
   },
   "scripts": {
     "build": "browserify . > outtest.js",
-    "test": "nodeunit tests/unit"
+    "test": "nodeunit tests/unit",
+    "buildintegration": "browserify ./tests/integration/inttest.js > ./tests/integration/app.inttest.js"
   },
   "keywords": [
     "web",

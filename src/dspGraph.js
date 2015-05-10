@@ -16,7 +16,7 @@ internal.createConstant = function (audioCtx, audioTargetNode, graphAst) {
 internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
 
     var name  = graphAst.name;
-    var value = graphAst.defaultValue;
+    var value = graphAst.value;
     audioTargetNode.set(value, audioCtx);
 
     var p = {
@@ -24,7 +24,7 @@ internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
         params: {}
     };
     p.paramNames.push(name);
-    p.params[paramName] = [
+    p.params[name] = [
         {
             set: function (newValue) {
                 value = newValue;
@@ -34,8 +34,8 @@ internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
                 return value;
             }
         }
-    ]
-    return paramParams;
+    ];
+    return p;
 };
 
 internal.createInput = function (audioCtx, audioTargetNode, graphAst) {
@@ -43,14 +43,14 @@ internal.createInput = function (audioCtx, audioTargetNode, graphAst) {
 
     var inputParams = {};
     inputParams.params = {};
-    inputParams.paramNames = ['connect'];
-    inputParams.params.connect = [
+    inputParams.paramNames = [inputName];
+    inputParams.params[inputName] = [
         {
             set: function (sourceNode) {
                 sourceNode.connect(audioTargetNode);
             },
             get: function () {
-                return audioTargetNode
+                return audioTargetNode;
             },
         }
     ];
@@ -122,6 +122,7 @@ internal.createNoise = function (audioCtx, audioTargetNode, graphAst) {
             audioNode = noise.createWhite(audioCtx);
             break;
     }
+    audioNode.connect(audioTargetNode);
     return {
         paramNames: [],
         params: {}
@@ -297,7 +298,7 @@ internal.createCompressor = function (audioCtx, audioTargetNode, graphAst) {
 internal.createDelay = function (audioCtx, audioTargetNode, graphAst) {
     var feedbackAmp = audioCtx.createGain();
     var mainAmp = audioCtx.createGain();
-    var delayNode = audioCtx.createDelay(graphAst);
+    var delayNode = audioCtx.createDelay(graphAst.delayMax.value);
 
     mainAmp.gain.value = 1;
 
