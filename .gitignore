@@ -1,3 +1,4 @@
 node_modules/
 outtest.js
 npm-debug.log
+*.inttest.js
