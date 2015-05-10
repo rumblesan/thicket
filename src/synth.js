@@ -46,14 +46,15 @@ Synth.getParam = function (synth, paramName) {
 };
 
 Synth.start = function (synth, parameterList) {
+    var plist = parameterList || [];
     var i, t;
     var paramName, paramValue;
     if (synth.params.start === undefined) {
         throw new Error('Synth does not have start parameter');
     } else {
-        for (i = 0; i < parameterList.length; i += 2) {
-            paramName  = parameterList[i];
-            paramValue = parameterList[i+1];
+        for (i = 0; i < plist.length; i += 2) {
+            paramName  = plist[i];
+            paramValue = plist[i+1];
             Synth.setParam(synth, paramName, paramValue);
         }
         for (t = 0; t < synth.params.start.length; t += 1) {
@@ -75,14 +76,15 @@ Synth.stop = function (synth) {
 };
 
 Synth.play = function (synth, length, parameterList) {
+    var plist = parameterList || [];
     var i, t;
     var paramName, paramValue;
     if (synth.params.play === undefined) {
         throw new Error('Synth does not have play parameter');
     } else {
-        for (i = 0; i < parameterList.length; i += 2) {
-            paramName  = parameterList[i];
-            paramValue = parameterList[i+1];
+        for (i = 0; i < plist.length; i += 2) {
+            paramName  = plist[i];
+            paramValue = plist[i+1];
             Synth.setParam(synth, paramName, paramValue);
         }
         for (t = 0; t < synth.params.play.length; t += 1) {
