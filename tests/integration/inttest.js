@@ -79,7 +79,9 @@ Audio.fxBus = system.Synth.getInputs(Audio.spaceEffects, 'fxinput')[0];
 
 Audio.drop = system.Synth.create(SynthDefs.drop, Audio.fxBus);
 Audio.hat = system.Synth.create(SynthDefs.hat, Audio.fxBus);
-Audio.kick = system.Synth.create(SynthDefs.kick, Audio.master);
+Audio.kick = system.Synth.create(SynthDefs.kick);
+
+system.Synth.connectToInput(Audio.master, 'master', Audio.kick.getOutput());
 
 document.getElementById('playdrop').addEventListener('click', function () {
     system.Synth.play(Audio.drop, 1, []);
