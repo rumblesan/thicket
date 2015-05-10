@@ -1,16 +1,19 @@
 
 var util = require('./util');
+var dn = require('./dspnode');
 var noise = require('./noise');
 
 var DspGraph = {};
 
 var internal = {};
 
+var config = {
+    defaultOutputName: 'default'
+};
+
 internal.createConstant = function (audioCtx, audioTargetNode, graphAst) {
     audioTargetNode.set(graphAst.value, audioCtx);
-    return {
-        paramNames: []
-    };
+    return dn.create();
 };
 
 internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
@@ -19,74 +22,77 @@ internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
     var value = graphAst.value;
     audioTargetNode.set(value, audioCtx);
 
-    var p = {
-        paramNames: [],
-        params: {}
-    };
-    p.paramNames.push(name);
-    p.params[name] = [
-        {
-            set: function (newValue) {
-                value = newValue;
-                audioTargetNode.set(newValue, audioCtx);
-            },
-            get: function () {
-                return value;
-            }
-        }
-    ];
-    return p;
+    var node = dn.create();
+    var paramObj = {
+                       set: function (newValue) {
+                           value = newValue;
+                           audioTargetNode.set(newValue, audioCtx);
+                       },
+                       get: function () {
+                           return value;
+                       }
+                   };
+
+    dn.addParam(node, name, paramObj);
+
+    return node;
 };
 
 internal.createInput = function (audioCtx, audioTargetNode, graphAst) {
     var inputName = graphAst.name;
 
-    var inputParams = {};
-    inputParams.params = {};
-    inputParams.paramNames = [inputName];
-    inputParams.params[inputName] = [
-        {
-            set: function (sourceNode) {
-                sourceNode.connect(audioTargetNode);
-            },
-            get: function () {
-                return audioTargetNode;
-            },
-        }
-    ];
-    return inputParams;
+    var node = dn.create();
+
+    var inputObj = {
+                       connect: function (sourceNode) {
+                           sourceNode.connect(audioTargetNode);
+                       },
+                       get: function () {
+                           return audioTargetNode;
+                       },
+                   };
+
+    dn.addInput(node, inputName, inputObj);
+
+    return node;
 };
 
 /* node to sum all inputs together */
 internal.createMix = function (audioCtx, audioTargetNode, graphAst) {
-    var paramSum     = util.createParamNodeSummer(audioCtx, audioTargetNode);
-    var outputParams = [];
+    var setFunction = function (value) {
+        audioTargetNode.set(value, audioCtx);
+    };
+
+    var paramSum    = dn.createSummer(setFunction);
+    var outputNodes = [];
 
     var s, n;
     for (s = 0; s < graphAst.sources; s += 1) {
         n = graphAst.sources[s];
         switch (n.type) {
             case 'CONSTANT':
-                paramSum.constant += n.value;
+                paramSum.incrConstant(n.value);
                 break;
             case 'PARAM':
-                outputParams.push(
-                    DspGraph.evaluate(audioCtx, paramSum.createSet(n.name), n)
+                outputNodes.push(
+                    DspGraph.evaluate(audioCtx, paramSum.createSetNode(n.name), n)
                 );
                 break;
             default:
-                outputParams.push(
+                outputNodes.push(
                     DspGraph.evaluate(audioCtx, audioTargetNode, n)
                 );
                 break;
         }
     }
 
-    return util.mergeNodeParams(outputParams);
+    return dn.merge(outputNodes);
 };
 
 /* node to multiply all inputs together */
 internal.createMultiply = function (audioCtx, audioTargetNode, graphAst) {
+
+    // TODO Actually make this work
 
     var factor = graphAst.factor.value;
 
@@ -96,13 +102,13 @@ internal.createMultiply = function (audioCtx, audioTargetNode, graphAst) {
         }
     };
 
-    var params = DspGraph.evaluate(
+    var node = DspGraph.evaluate(
         audioCtx,
         multSet,
         graphAst.source
     );
 
-    return params;
+    return node;
 };
 
 // No params for a noise source so return an empty param object
@@ -122,70 +128,62 @@ internal.createNoise = function (audioCtx, audioTargetNode, graphAst) {
             audioNode = noise.createWhite(audioCtx);
             break;
     }
-    audioNode.connect(audioTargetNode);
-    return {
-        paramNames: [],
-        params: {}
-    };
+
+    var node = dn.create();
+    dn.addOutput(node, config.defaultOutputName, audioNode);
+
+    if (audioTargetNode) {
+        audioNode.connect(audioTargetNode);
+    }
+
+    return node;
 };
 
 internal.createOscillator = function (audioCtx, audioTargetNode, graphAst) {
     var oscillator = audioCtx.createOscillator();
     oscillator.start();
 
-    var waveParam = DspGraph.evaluate(
+    var waveNode = DspGraph.evaluate(
         audioCtx,
         oscillator.getWaveParam(),
         graphAst.waveshape
     );
 
-    var freqParam = DspGraph.evaluate(
+    var freqNode = DspGraph.evaluate(
         audioCtx,
         oscillator.frequency,
         graphAst.frequency
     );
 
-    oscillator.connect(audioTargetNode);
+    var node = dn.merge([waveNode, freqNode]);
+    dn.addOutput(node, config.defaultOutputName, oscillator);
 
-    return util.mergeNodeParams([waveParam, freqParam]);
+    if (audioTargetNode) {
+        oscillator.connect(audioTargetNode);
+    }
+
+    return node;
 };
 
 internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
 
-    var envParams = {};
-    envParams.attack = {
-        value: 0,
-        set: function (newValue, audioCtx) {
-            envParams.attack.value = newValue;
-        },
-        get: function () {
-            return envParams.attack.value;
-        }
-    };
-    envParams.decay = {
-        value: 0,
-        set: function (newValue, audioCtx) {
-            envParams.decay.value = newValue;
-        },
-        get: function () {
-            return envParams.decay.value;
-        }
-    };
+    var attackAudioParam = dn.createParamNode();
+    var decayAudioParam = dn.createParamNode();
 
-    var attackParams = DspGraph.evaluate(
+    var attackNode = DspGraph.evaluate(
         audioCtx,
-        envParams.attack,
+        attackAudioParam,
         graphAst.attack
     );
 
-    var decayParams = DspGraph.evaluate(
+    var decayNode = DspGraph.evaluate(
         audioCtx,
-        envParams.decay,
+        decayAudioParam,
         graphAst.decay
     );
 
     var play = function (length) {
-        var t = audioCtx.currentTime + envParams.attack.value;
+        var t = audioCtx.currentTime + attackAudioParam.value;
         audioTargetNode.linearRampToValueAtTime(
             1.0, t
         );
@@ -193,106 +191,119 @@ internal.createEnvelope = function (audioCtx, audioTargetNode, graphAst) {
             1.0, (t + length)
         );
         audioTargetNode.linearRampToValueAtTime(
-            0.0, (t + length + envParams.decay.value)
+            0.0, (t + length + attackAudioParam.value)
         );
     };
     var start = function () {
-        var t = audioCtx.currentTime + envParams.decay.value;
+        var t = audioCtx.currentTime + decayAudioParam.value;
         audioTargetNode.linearRampToValueAtTime(
             1.0, t
         );
     };
     var stop = function () {
-        var t = audioCtx.currentTime + envParams.decay.value;
+        var t = audioCtx.currentTime + decayAudioParam.value;
         audioTargetNode.linearRampToValueAtTime(
             0.0, t
         );
     };
-    var triggerParams = {
-        paramNames: ['play', 'start', 'stop'],
-        params: {
-            play: [play],
-            start: [start],
-            stop: [stop]
-        }
-    };
 
-    return util.mergeNodeParams([attackParams, decayParams, triggerParams]);
+    var envelopeNode = dn.create();
+    dn.addEnvelope(envelopeNode, 'start', start);
+    dn.addEnvelope(envelopeNode, 'stop', stop);
+    dn.addEnvelope(envelopeNode, 'play', play);
+
+    return dn.merge([attackNode, decayNode, envelopeNode]);
 };
 
 internal.createFilter = function (audioCtx, audioTargetNode, graphAst) {
     var filter = audioCtx.createBiquadFilter();
 
-    var sourceParams = DspGraph.evaluate(
+    var sourceNode = DspGraph.evaluate(
         audioCtx,
         filter,
         graphAst.source
     );
 
-    var filterTypeParam = DspGraph.evaluate(
+    var filterTypeNode = DspGraph.evaluate(
         audioCtx,
         filter.getFilterTypeParam(),
         graphAst.filterType
     );
 
-    var freqParam = DspGraph.evaluate(
+    var freqNode = DspGraph.evaluate(
         audioCtx,
         filter.frequency,
         graphAst.frequency
     );
 
-    var resonanceParam = DspGraph.evaluate(
+    var resonanceNode = DspGraph.evaluate(
         audioCtx,
         filter.Q,
         graphAst.resonance
     );
 
-    filter.connect(audioTargetNode);
+    var node =  dn.merge([sourceNode, filterTypeNode, freqNode, resonanceNode]);
+    dn.addOutput(node, config.defaultOutputName, filter);
 
-    return util.mergeNodeParams([sourceParams, filterTypeParam, freqParam, resonanceParam]);
+    if (audioTargetNode) {
+        filter.connect(audioTargetNode);
+    }
+
+    return node;
 };
 
 internal.createAmp = function (audioCtx, audioTargetNode, graphAst) {
     var amp = audioCtx.createGain();
     amp.gain.value = 0;
 
-    var sourceParams = DspGraph.evaluate(
+    var sourceNode = DspGraph.evaluate(
         audioCtx,
         amp,
         graphAst.source
     );
 
-    var volumeParams = DspGraph.evaluate(
+    var volumeNode = DspGraph.evaluate(
         audioCtx,
         amp.gain,
         graphAst.volume
     );
-    amp.connect(audioTargetNode);
 
-    return util.mergeNodeParams([sourceParams, volumeParams]);
+    var node =  dn.merge([sourceNode, volumeNode]);
+    dn.addOutput(node, config.defaultOutputName, amp);
+
+    if (audioTargetNode) {
+        amp.connect(audioTargetNode);
+    }
+
+    return node;
 };
 
 internal.createCompressor = function (audioCtx, audioTargetNode, graphAst) {
     var comp = audioCtx.createDynamicsCompressor();
 
-    var sourceParams = DspGraph.evaluate(
+    var sourceNode = DspGraph.evaluate(
         audioCtx,
         comp,
         graphAst.source
     );
 
-    var thresholdParams = DspGraph.evaluate(audioCtx, comp.threshold, graphAst.threshold);
-    var ratioParams     = DspGraph.evaluate(audioCtx, comp.ratio,     graphAst.ratio);
-    var kneeParams      = DspGraph.evaluate(audioCtx, comp.knee,      graphAst.knee);
-    var reductionParams = DspGraph.evaluate(audioCtx, comp.reduction, graphAst.reduction);
-    var attackParams    = DspGraph.evaluate(audioCtx, comp.attack,    graphAst.attack);
-    var releaseParams   = DspGraph.evaluate(audioCtx, comp.release,   graphAst.release);
+    var thresholdNode = DspGraph.evaluate(audioCtx, comp.threshold, graphAst.threshold);
+    var ratioNode     = DspGraph.evaluate(audioCtx, comp.ratio,     graphAst.ratio);
+    var kneeNode      = DspGraph.evaluate(audioCtx, comp.knee,      graphAst.knee);
+    var reductionNode = DspGraph.evaluate(audioCtx, comp.reduction, graphAst.reduction);
+    var attackNode    = DspGraph.evaluate(audioCtx, comp.attack,    graphAst.attack);
+    var releaseNode   = DspGraph.evaluate(audioCtx, comp.release,   graphAst.release);
 
-    comp.connect(audioTargetNode);
-
-    return util.mergeNodeParams([
-        sourceParams, thresholdParams, kneeParams, reductionParams, attackParams, releaseParams
+    var node = dn.merge([
+        sourceNode, thresholdNode, kneeNode, reductionNode, attackNode, releaseNode
     ]);
+    dn.addOutput(node, config.defaultOutputName, comp);
+
+    if (audioTargetNode) {
+        comp.connect(audioTargetNode);
+    }
+
+    return node;
 };
 
 internal.createDelay = function (audioCtx, audioTargetNode, graphAst) {
@@ -302,19 +313,19 @@ internal.createDelay = function (audioCtx, audioTargetNode, graphAst) {
 
     mainAmp.gain.value = 1;
 
-    var sourceParams = DspGraph.evaluate(
+    var sourceNode = DspGraph.evaluate(
         audioCtx,
         mainAmp,
         graphAst.source
     );
 
-    var delayTimeParams = DspGraph.evaluate(
+    var delayTimeNode = DspGraph.evaluate(
         audioCtx,
         delayNode.delayTime,
         graphAst.delayTime
     );
 
-    var feedbackParams = DspGraph.evaluate(
+    var feedbackNode = DspGraph.evaluate(
         audioCtx,
         feedbackAmp.gain,
         graphAst.feedback
@@ -324,9 +335,14 @@ internal.createDelay = function (audioCtx, audioTargetNode, graphAst) {
     delayNode.connect(feedbackAmp);
     feedbackAmp.connect(mainAmp);
 
-    mainAmp.connect(audioTargetNode);
+    var node = dn.merge([sourceNode, delayTimeNode, feedbackNode]);
+    dn.addOutput(node, config.defaultOutputName, mainAmp);
 
-    return util.mergeNodeParams([sourceParams, delayTimeParams, feedbackParams]);
+    if (audioTargetNode) {
+        mainAmp.connect(audioTargetNode);
+    }
+
+    return node;
 };
 
 DspGraph.evaluate = function(audioCtx, audioTargetNode, graphAst) {

@@ -69,11 +69,13 @@ FXDefs.space = Delay(
 
 var Audio = {};
 
-Audio.output = system.Effects.create(FXDefs.output);
-Audio.master = system.Synth.getParam(Audio.output, 'master')[0];
+Audio.masterOut = system.Effects.create(FXDefs.output, system.out);
 
-Audio.spaceEffects = system.Effects.create(FXDefs.space, Audio.master);
-Audio.fxBus = system.Synth.getParam(Audio.spaceEffects, 'fxinput')[0];
+Audio.spaceEffects = system.Effects.create(FXDefs.space);
+system.Synth.connectSynthToInput(Audio.masterOut, 'master', Audio.spaceEffects, 'default');
+
+Audio.master = system.Synth.getInputs(Audio.masterOut, 'master')[0];
+Audio.fxBus = system.Synth.getInputs(Audio.spaceEffects, 'fxinput')[0];
 
 Audio.drop = system.Synth.create(SynthDefs.drop, Audio.fxBus);
 Audio.hat = system.Synth.create(SynthDefs.hat, Audio.fxBus);
