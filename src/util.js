@@ -1,62 +1,79 @@
 
 var util = {};
 
-util.mergeNodeParams = function (paramNodes) {
-    var output = {
-        paramNames: [],
-        params: {}
-    };
-    var node;
-    var paramName;
-    var n, p, pf;
-    for (n = 0; n < paramNodes.length; n += 1) {
-        node = paramNodes[n];
-        for (p = 0; p < node.paramNames.length; p += 1) {
-            paramName = node.paramNames[p];
-            if (output.params[paramName] === undefined) {
-                output.params[paramName] = [];
-                output.paramNames.push(paramName);
-            }
-            for (pf = 0; pf < node.params[paramName].length; pf += 1) {
-                output.params[paramName].push(node.params[paramName][pf]);
-            }
+/**
+ * obj:     Object
+ * mapFunc: function (string, <V>): <T>
+ * return:  Array<T>
+ */
+util.mapObject = function (obj, mapFunc) {
+    var out = [];
+    var key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            out.push(mapFunc(key, obj[key]));
         }
     }
-    return output;
+    return out;
 };
 
-util.createParamNodeSummer = function (audioCtx, audioTargetNode) {
-    var paramSummer = {};
-
-    paramSummer.constant = 0;
-    paramSummer.names = [];
-    paramSummer.values = {};
-
-    paramSummer.setTarget = function () {
-        var name, i, v, total = paramSummer.constant;
-        for (i = 0; i < paramSummer.names.length; i += 1) {
-            name = paramSummer.names[i];
-            v = paramSummer.values[name];
-            total += v;
+/**
+ * obj:      Object
+ * initial:  <T>
+ * foldFunc: function (<T>, string, <V>): <T>
+ * return:   <T>
+ */
+util.foldObject = function (obj, initial, foldFunc) {
+    var out = initial;
+    var key;
+    for (key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            out = foldFunc(out, key, obj[key]);
         }
-        audioTargetNode.set(total, audioCtx);
-    };
-
-    paramSummer.createSetNode = function (name) {
-        paramSummer.names.push(name);
-        paramSummer.values[name] = 0;
-        var setNode = {
-            set: function (value) {
-                paramSummer.values[name] = value;
-                paramSummer.setTarget();
-            }
-        };
-        return setNode;
-    };
-
-    return paramSummer;
+    }
+    return out;
 };
 
+/**
+ * obj:    Object
+ * return: Array<String>
+ */
+util.getObjectKeys = function (obj) {
+    var keys = [];
+    util.mapObject(obj, function (k, v) {
+        keys.push(k);
+    });
+    return keys;
+};
+
+/**
+ * arr:     Array<A>
+ * mapFunc: function (<A>): <B>
+ * return:  Array<B>
+ */
+util.mapArray = function (arr, mapFunc) {
+    var out = [];
+    var i;
+    for (i = 0; i < arr.length; i += 1) {
+        out.push(mapFunc(arr[i]));
+    }
+    return out;
+};
+
+/**
+ * arr:      Array<A>
+ * initial:  <B>
+ * foldFunc: function (<B>, <A>): <B>
+ * return:   <B>
+ */
+util.foldArray = function (arr, initial, foldFunc) {
+    var out = initial;
+    var i;
+    for (i = 0; i < arr.length; i += 1) {
+        out = foldFunc(out, arr[i]);
+    }
+    return out;
+};
 
 module.exports = util;
 
