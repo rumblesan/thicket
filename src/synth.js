@@ -19,7 +19,7 @@ Synth.setParam = function (synth, paramName, value) {
     if (synth.params[paramName] === undefined) {
         throw new Error('Synth does not have ' + paramName + ' parameter');
     } else {
-        util.mapObject(synth.params[paramName], function (p) {
+        util.mapArray(synth.params[paramName], function (p) {
             p.set(value);
         });
     }
@@ -30,7 +30,7 @@ Synth.getParam = function (synth, paramName) {
     if (synth.params[paramName] === undefined) {
         throw new Error('Synth does not have ' + paramName + ' parameter');
     } else {
-        output = util.mapObject(synth.params[paramName], function (p) {
+        output = util.mapArray(synth.params[paramName], function (p) {
             return p.get();
         });
     }
