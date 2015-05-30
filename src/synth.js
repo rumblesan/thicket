@@ -6,7 +6,7 @@ var Synth = {};
 
 
 Synth.create = function (audioCtx, dspAst) {
-    var destinationNode = undefined;
+    var destinationNode = null;
     return DspGraph.evaluate(
         audioCtx,
         destinationNode,

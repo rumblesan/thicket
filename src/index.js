@@ -6,6 +6,7 @@ var graphAST = require('./dspAst');
 var Synth = require('./synth');
 var Effects = require('./effects');
 var Helpers = require('./helpers');
+var util = require('./util');
 
 var Thicket = {};
 
@@ -85,6 +86,18 @@ Thicket.createSystem = function (audioCtx) {
      * sourceNode
      */
     AudioSystem.Synth.connectToInputs = Synth.connectToInputs;
+
+    /**
+     * sourceSynth
+     * sourceOutputsName
+     */
+    AudioSystem.Synth.connectToMasterOut = function (sourceSynth, sourceOutputsName) {
+        var dest = audioCtx.destination;
+        var outputs = Synth.getOutputs(sourceSynth, sourceOutputsName);
+        util.mapArray(outputs, function (o) {
+            o.connect(dest);
+        });
+    };
 
     /**
      * synth

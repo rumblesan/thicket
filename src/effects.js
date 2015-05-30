@@ -11,8 +11,8 @@ var Effects = {};
  *     }
  **/
 
-Effects.createChain = function (audioCtx, dspAst, destination) {
-    var destinationNode = destination || audioCtx.destination;
+Effects.createChain = function (audioCtx, dspAst) {
+    var destinationNode = null;
     return DspGraph.evaluate(
         audioCtx,
         destinationNode,

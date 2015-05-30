@@ -69,7 +69,8 @@ FXDefs.space = Delay(
 
 var Audio = {};
 
-Audio.masterOut = system.Effects.create(FXDefs.output, system.out[0]);
+Audio.masterOut = system.Effects.create(FXDefs.output);
+system.Synth.connectToMasterOut(Audio.masterOut, 'default');
 
 Audio.spaceEffects = system.Effects.create(FXDefs.space);
 system.Synth.connectSynthToInputs(Audio.masterOut, 'master', Audio.spaceEffects, 'default');
