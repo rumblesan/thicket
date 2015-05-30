@@ -77,22 +77,22 @@ Thicket.createSystem = function (audioCtx) {
      * sourceSynth
      * sourceOutputName
      */
-    AudioSystem.Synth.connectSynthToInput = Synth.connectSynthToInput;
+    AudioSystem.Synth.connectSynthToInputs = Synth.connectSynthToInputs;
 
     /**
      * synth
      * inputName
      * sourceNode
      */
-    AudioSystem.Synth.connectToInput = Synth.connectToInput;
+    AudioSystem.Synth.connectToInputs = Synth.connectToInputs;
 
     /**
      * synth
      * outputName
      */
-    AudioSystem.Synth.getOutput = Synth.getOutput;
+    AudioSystem.Synth.getOutputs = Synth.getOutputs;
 
-    AudioSystem.out = audioCtx.destination;
+    AudioSystem.out = [audioCtx.destination];
 
     return AudioSystem;
 };

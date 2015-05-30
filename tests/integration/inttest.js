@@ -69,19 +69,18 @@ FXDefs.space = Delay(
 
 var Audio = {};
 
-Audio.masterOut = system.Effects.create(FXDefs.output, system.out);
+Audio.masterOut = system.Effects.create(FXDefs.output, system.out[0]);
 
 Audio.spaceEffects = system.Effects.create(FXDefs.space);
-system.Synth.connectSynthToInput(Audio.masterOut, 'master', Audio.spaceEffects, 'default');
+system.Synth.connectSynthToInputs(Audio.masterOut, 'master', Audio.spaceEffects, 'default');
 
-Audio.master = system.Synth.getInputs(Audio.masterOut, 'master')[0];
-Audio.fxBus = system.Synth.getInputs(Audio.spaceEffects, 'fxinput')[0];
-
-Audio.drop = system.Synth.create(SynthDefs.drop, Audio.fxBus);
-Audio.hat = system.Synth.create(SynthDefs.hat, Audio.fxBus);
+Audio.drop = system.Synth.create(SynthDefs.drop);
+Audio.hat = system.Synth.create(SynthDefs.hat);
 Audio.kick = system.Synth.create(SynthDefs.kick);
 
-system.Synth.connectToInput(Audio.master, 'master', Audio.kick.getOutput());
+system.Synth.connectToInputs(Audio.spaceEffects, 'fxinput', system.Synth.getOutputs(Audio.drop, 'default'));
+system.Synth.connectToInputs(Audio.spaceEffects, 'fxinput', system.Synth.getOutputs(Audio.hat, 'default'));
+system.Synth.connectToInputs(Audio.masterOut, 'master', system.Synth.getOutputs(Audio.kick, 'default'));
 
 document.getElementById('playdrop').addEventListener('click', function () {
     system.Synth.play(Audio.drop, 1, []);

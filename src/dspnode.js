@@ -77,8 +77,11 @@ DSPNode.addInput = function (node, name, inputObj) {
     node.inputs[name].push(inputObj);
 };
 
-DSPNode.addOutput = function (node, name, output) {
-    node.outputs[name] = output;
+DSPNode.addOutput = function (node, name, outputObj) {
+    if (node.outputs[name] === undefined) {
+        node.outputs[name] = [];
+    }
+    node.outputs[name].push(outputObj);
 };
 
 /**

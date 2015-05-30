@@ -5,8 +5,8 @@ var util = require('./util');
 var Synth = {};
 
 
-Synth.create = function (audioCtx, dspAst, destination) {
-    var destinationNode = destination || undefined;
+Synth.create = function (audioCtx, dspAst) {
+    var destinationNode = undefined;
     return DspGraph.evaluate(
         audioCtx,
         destinationNode,
@@ -97,33 +97,37 @@ Synth.getInputs = function (synth, inputName) {
     return inputs;
 };
 
-Synth.connectSynthToInput = function (synth, inputName, sourceSynth, sourceOutputName) {
+Synth.connectSynthToInputs = function (synth, inputName, sourceSynth, sourceOutputsName) {
     if (synth.inputs[inputName] === undefined) {
         throw new Error('Synth does not have ' + inputName + ' input');
     }
-    var output = Synth.getOutput(sourceSynth, sourceOutputName);
+    var outputs = Synth.getOutputs(sourceSynth, sourceOutputsName);
     util.mapArray(synth.inputs[inputName], function (i) {
-        i.connect(output);
+        util.mapArray(outputs, function (o) {
+            i.connect(o);
+        });
     });
 };
 
-Synth.connectToInput = function (synth, inputName, sourceNode) {
+Synth.connectToInputs = function (synth, inputName, sourceNodes) {
     if (synth.inputs[inputName] === undefined) {
         throw new Error('Synth does not have ' + inputName + ' input');
     }
     util.mapArray(synth.inputs[inputName], function (i) {
-        i.connect(sourceNode);
+        util.mapArray(sourceNodes, function (o) {
+            i.connect(o);
+        });
     });
 };
 
-Synth.getOutput = function (synth, outputName) {
-    var output = null;
-    if (synth.outputs[outputName] === undefined) {
-        throw new Error('Synth does not have ' + outputName + ' input');
+Synth.getOutputs = function (synth, outputsName) {
+    var outputs = [];
+    if (synth.outputs[outputsName] === undefined) {
+        throw new Error('Synth does not have ' + outputsName + ' input');
     } else {
-        output = synth.outputs[outputName];
+        outputs = synth.outputs[outputsName];
     }
-    return output;
+    return outputs;
 };
 
 
