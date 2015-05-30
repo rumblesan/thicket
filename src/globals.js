@@ -1,6 +1,6 @@
 /*global AudioParam, OscillatorNode, BiquadFilterNode */
 
-var root = this;
+var root = global;
 
 if (root.AudioContext || root.webkitAudioContext) {
 
