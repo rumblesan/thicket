@@ -83,14 +83,14 @@ system.Synth.connectToInputs(Audio.spaceEffects, 'fxinput', system.Synth.getOutp
 system.Synth.connectToInputs(Audio.masterOut, 'master', system.Synth.getOutputs(Audio.kick, 'default'));
 
 document.getElementById('playdrop').addEventListener('click', function () {
-    system.Synth.play(Audio.drop, 1, []);
+    system.Synth.play(Audio.drop, 1);
 });
 
 document.getElementById('playhat').addEventListener('click', function () {
-    system.Synth.play(Audio.hat, 0, []);
+    system.Synth.play(Audio.hat, 0);
 });
 
 document.getElementById('playkick').addEventListener('click', function () {
-    system.Synth.play(Audio.kick, 0.2, []);
+    system.Synth.play(Audio.kick, 0.2);
 });
 
