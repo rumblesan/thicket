@@ -4,19 +4,19 @@ var dsp = {};
 var checkConst = function (v) {
     var out;
     switch (typeof v) {
-        case 'number':
-            out = dsp.Constant(v);
-            break;
-        case 'string':
-            out = dsp.Constant(v);
-            break;
-        default:
-            if (v.type !== undefined) {
-                // Assuming v is a DSP Graph
-                out = v;
-            } else {
-                throw Error.create("Invalid value in DSP Graph: " + v);
-            }
+    case 'number':
+        out = dsp.Constant(v);
+        break;
+    case 'string':
+        out = dsp.Constant(v);
+        break;
+    default:
+        if (v.type !== undefined) {
+            // Assuming v is a DSP Graph
+            out = v;
+        } else {
+            throw Error.create('Invalid value in DSP Graph: ' + v);
+        }
     }
     return out;
 };

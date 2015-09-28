@@ -1,5 +1,4 @@
 
-var util = require('./util');
 var dn = require('./dspnode');
 var noise = require('./noise');
 
@@ -24,14 +23,14 @@ internal.createParam = function (audioCtx, audioTargetNode, graphAst) {
 
     var node = dn.create();
     var paramObj = {
-                       set: function (newValue) {
-                           value = newValue;
-                           audioTargetNode.set(newValue, audioCtx);
-                       },
-                       get: function () {
-                           return value;
-                       }
-                   };
+        set: function (newValue) {
+            value = newValue;
+            audioTargetNode.set(newValue, audioCtx);
+        },
+        get: function () {
+            return value;
+        }
+    };
 
     dn.addParam(node, name, paramObj);
 
@@ -44,13 +43,13 @@ internal.createInput = function (audioCtx, audioTargetNode, graphAst) {
     var node = dn.create();
 
     var inputObj = {
-                       connect: function (sourceNode) {
-                           sourceNode.connect(audioTargetNode);
-                       },
-                       get: function () {
-                           return audioTargetNode;
-                       },
-                   };
+        connect: function (sourceNode) {
+            sourceNode.connect(audioTargetNode);
+        },
+        get: function () {
+            return audioTargetNode;
+        }
+    };
 
     dn.addInput(node, inputName, inputObj);
 
@@ -70,19 +69,19 @@ internal.createMix = function (audioCtx, audioTargetNode, graphAst) {
     for (s = 0; s < graphAst.sources; s += 1) {
         n = graphAst.sources[s];
         switch (n.type) {
-            case 'CONSTANT':
-                paramSum.incrConstant(n.value);
-                break;
-            case 'PARAM':
-                outputNodes.push(
-                    DspGraph.evaluate(audioCtx, paramSum.createSetNode(n.name), n)
-                );
-                break;
-            default:
-                outputNodes.push(
-                    DspGraph.evaluate(audioCtx, audioTargetNode, n)
-                );
-                break;
+        case 'CONSTANT':
+            paramSum.incrConstant(n.value);
+            break;
+        case 'PARAM':
+            outputNodes.push(
+                DspGraph.evaluate(audioCtx, paramSum.createSetNode(n.name), n)
+            );
+            break;
+        default:
+            outputNodes.push(
+                DspGraph.evaluate(audioCtx, audioTargetNode, n)
+            );
+            break;
         }
     }
 
@@ -115,18 +114,18 @@ internal.createMultiply = function (audioCtx, audioTargetNode, graphAst) {
 internal.createNoise = function (audioCtx, audioTargetNode, graphAst) {
     var audioNode;
     switch(graphAst.noiseType) {
-        case 'white':
-            audioNode = noise.createWhite(audioCtx);
-            break;
-        case 'pink':
-            audioNode = noise.createPink(audioCtx);
-            break;
-        case 'brown':
-            audioNode = noise.createBrown(audioCtx);
-            break;
-        default:
-            audioNode = noise.createWhite(audioCtx);
-            break;
+    case 'white':
+        audioNode = noise.createWhite(audioCtx);
+        break;
+    case 'pink':
+        audioNode = noise.createPink(audioCtx);
+        break;
+    case 'brown':
+        audioNode = noise.createBrown(audioCtx);
+        break;
+    default:
+        audioNode = noise.createWhite(audioCtx);
+        break;
     }
 
     var node = dn.create();
@@ -295,7 +294,7 @@ internal.createCompressor = function (audioCtx, audioTargetNode, graphAst) {
     var releaseNode   = DspGraph.evaluate(audioCtx, comp.release,   graphAst.release);
 
     var node = dn.merge([
-        sourceNode, thresholdNode, kneeNode, reductionNode, attackNode, releaseNode
+        sourceNode, thresholdNode, ratioNode, kneeNode, reductionNode, attackNode, releaseNode
     ]);
     dn.addOutput(node, config.defaultOutputName, comp);
 
@@ -348,44 +347,44 @@ internal.createDelay = function (audioCtx, audioTargetNode, graphAst) {
 DspGraph.evaluate = function(audioCtx, audioTargetNode, graphAst) {
     var result;
     switch (graphAst.type) {
-        case 'CONSTANT':
-            result = internal.createConstant(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'PARAM':
-            result = internal.createParam(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'INPUT':
-            result = internal.createInput(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'MIX':
-            result = internal.createMix(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'MULTIPLY':
-            result = internal.createMultiply(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'ARENVELOPE':
-            result = internal.createEnvelope(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'OSCILLATOR':
-            result = internal.createOscillator(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'NOISE':
-            result = internal.createNoise(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'FILTER':
-            result = internal.createFilter(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'AMP':
-            result = internal.createAmp(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'COMPRESSOR':
-            result = internal.createCompressor(audioCtx, audioTargetNode, graphAst);
-            break;
-        case 'DELAY':
-            result = internal.createDelay(audioCtx, audioTargetNode, graphAst);
-            break;
-        default:
-            throw new Error("Unknown DSP graph type: " + graphAst.type);
+    case 'CONSTANT':
+        result = internal.createConstant(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'PARAM':
+        result = internal.createParam(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'INPUT':
+        result = internal.createInput(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'MIX':
+        result = internal.createMix(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'MULTIPLY':
+        result = internal.createMultiply(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'ARENVELOPE':
+        result = internal.createEnvelope(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'OSCILLATOR':
+        result = internal.createOscillator(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'NOISE':
+        result = internal.createNoise(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'FILTER':
+        result = internal.createFilter(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'AMP':
+        result = internal.createAmp(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'COMPRESSOR':
+        result = internal.createCompressor(audioCtx, audioTargetNode, graphAst);
+        break;
+    case 'DELAY':
+        result = internal.createDelay(audioCtx, audioTargetNode, graphAst);
+        break;
+    default:
+        throw new Error('Unknown DSP graph type: ' + graphAst.type);
     }
     return result;
 };

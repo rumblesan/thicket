@@ -40,7 +40,7 @@ util.foldObject = function (obj, initial, foldFunc) {
  */
 util.getObjectKeys = function (obj) {
     var keys = [];
-    util.mapObject(obj, function (k, v) {
+    util.mapObject(obj, function (k) {
         keys.push(k);
     });
     return keys;

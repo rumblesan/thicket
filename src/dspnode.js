@@ -3,8 +3,6 @@ var util = require('./util');
 
 var DSPNode = {};
 
-var priv = {};
-
 /**
  * {
  *   params: {
@@ -163,10 +161,10 @@ DSPNode.createParamNode = function () {
     var node = {
         value: 0
     };
-    node.set = function (newValue, audioCtx) {
+    node.set = function (newValue) {
         node.value = newValue;
     };
-    node.get = function (newValue, audioCtx) {
+    node.get = function () {
         return node.value;
     };
     return node;

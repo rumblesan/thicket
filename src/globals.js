@@ -1,8 +1,6 @@
 /*global AudioParam, OscillatorNode, BiquadFilterNode */
 
-var root = global;
-
-if (root.AudioContext || root.webkitAudioContext) {
+if (window || window.AudioContext || window.webkitAudioContext) {
 
     AudioParam.prototype.set = function (newValue, audioCtx) {
         if (this.setValueAtTime) {
@@ -15,7 +13,7 @@ if (root.AudioContext || root.webkitAudioContext) {
     OscillatorNode.prototype.getWaveParam = function () {
         var self = this;
         return {
-            set: function (waveType, audioCtx) {
+            set: function (waveType) {
                 self.type = waveType;
             },
             get: function () {
@@ -27,7 +25,7 @@ if (root.AudioContext || root.webkitAudioContext) {
     BiquadFilterNode.prototype.getFilterTypeParam = function () {
         var self = this;
         return {
-            set: function (filterType, audioCtx) {
+            set: function (filterType) {
                 self.type = filterType;
             },
             get: function () {

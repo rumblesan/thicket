@@ -15,7 +15,6 @@ Synth.create = function (audioCtx, dspAst) {
 };
 
 Synth.setParam = function (synth, paramName, value) {
-    var i;
     if (synth.params[paramName] === undefined) {
         throw new Error('Synth does not have ' + paramName + ' parameter');
     } else {
@@ -26,7 +25,7 @@ Synth.setParam = function (synth, paramName, value) {
 };
 
 Synth.getParam = function (synth, paramName) {
-    var i, output = [];
+    var output = [];
     if (synth.params[paramName] === undefined) {
         throw new Error('Synth does not have ' + paramName + ' parameter');
     } else {
@@ -39,7 +38,7 @@ Synth.getParam = function (synth, paramName) {
 
 Synth.start = function (synth, parameterList) {
     var plist = parameterList || [];
-    var i, e;
+    var i;
     var paramName, paramValue;
     if (synth.envelopes.start === undefined) {
         throw new Error('Synth does not have start parameter');
@@ -56,8 +55,6 @@ Synth.start = function (synth, parameterList) {
 };
 
 Synth.stop = function (synth) {
-    var i, t;
-    var paramName, paramValue;
     if (synth.envelopes.stop === undefined) {
         throw new Error('Synth does not have stop parameter');
     } else {
@@ -69,7 +66,7 @@ Synth.stop = function (synth) {
 
 Synth.play = function (synth, length, parameterList) {
     var plist = parameterList || [];
-    var i, t;
+    var i;
     var paramName, paramValue;
     if (synth.envelopes.play === undefined) {
         throw new Error('Synth does not have play parameter');
