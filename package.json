@@ -10,7 +10,8 @@
   "scripts": {
     "build": "browserify . > outtest.js",
     "test": "nodeunit tests/unit",
-    "buildintegration": "browserify ./tests/integration/inttest.js > ./tests/integration/app.inttest.js"
+    "buildintegration": "browserify ./tests/integration/inttest.js > ./tests/integration/app.inttest.js",
+    "serveint": "http-server ./tests/integration"
   },
   "keywords": [
     "web",
@@ -20,6 +21,7 @@
   "license": "BSD-3-Clause",
   "devDependencies": {
     "browserify": "^10.0.0",
+    "http-server": "^0.8.5",
     "nodeunit": "^0.9.1"
   }
 }
